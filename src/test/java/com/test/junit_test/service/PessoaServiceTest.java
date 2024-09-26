@@ -166,33 +166,6 @@ public class PessoaServiceTest {
   }
 
   @Test
-  @DisplayName("Não deve fazer upload caso o arquivo seja nulo")
-  public void naoDeveFazerUploadCasoArquivoNulo() {
-
-    // ------------------------- CHAMADA DE MÉTODO PARA LANÇAR EXCEÇÃO [Act] -------------------------
-
-    // [assertThrows] Verifica se é lançado exceção ao chamar o método ao lançar o file como null
-    final RuntimeException e = assertThrows(RuntimeException.class, () -> {
-      // Faza a chamada do método com o arquivo nulo para gerar a exceção
-      this.pessoaService.uploadDocument(null);
-    });
-
-    // ------------------------------------ VERIFICAÇÕES [Assert] --------------------------------------
-
-    // Verifica se foi lançado a exeção
-    assertNotNull(e);
-    // Verifica se a mensagem da exceção esta correta
-    assertThat(e.getMessage(), is("Erro ao carregar arquivo"));
-    // Verifica se existe a causa na exeção
-    assertThat(e.getCause(), notNullValue());
-    // Verifica se a mensagem da causa está correta
-    assertThat(e.getCause().getMessage(), is("arquivo é obrigatório!"));
-
-    // [verify] verifica se o método do service foi chamado 
-    verify(this.pessoaService).uploadDocument(null);
-  }
-
-  @Test
   @DisplayName("Deve acionar exception quando o repository falhar")
   public void deveAcionarExceptionQuandoRepositoryFalhar() {
 
@@ -227,6 +200,33 @@ public class PessoaServiceTest {
     verify(this.pessoaRepository).findPessoa(cpfInvalido);
     // [verifyNoMoreInteractions] verifica se o método do repository não foi chamado mais de uma vez dentro do service
     verifyNoMoreInteractions(this.pessoaRepository);
+  }
+
+  @Test
+  @DisplayName("Não deve fazer upload caso o arquivo seja nulo")
+  public void naoDeveFazerUploadCasoArquivoNulo() {
+
+    // ------------------------- CHAMADA DE MÉTODO PARA LANÇAR EXCEÇÃO [Act] -------------------------
+
+    // [assertThrows] Verifica se é lançado exceção ao chamar o método ao lançar o file como null
+    final RuntimeException e = assertThrows(RuntimeException.class, () -> {
+      // Faza a chamada do método com o arquivo nulo para gerar a exceção
+      this.pessoaService.uploadDocument(null);
+    });
+
+    // ------------------------------------ VERIFICAÇÕES [Assert] --------------------------------------
+
+    // Verifica se foi lançado a exeção
+    assertNotNull(e);
+    // Verifica se a mensagem da exceção esta correta
+    assertThat(e.getMessage(), is("Erro ao carregar arquivo"));
+    // Verifica se existe a causa na exeção
+    assertThat(e.getCause(), notNullValue());
+    // Verifica se a mensagem da causa está correta
+    assertThat(e.getCause().getMessage(), is("arquivo é obrigatório!"));
+
+    // [verify] verifica se o método do service foi chamado 
+    verify(this.pessoaService).uploadDocument(null);
   }
   
 }
