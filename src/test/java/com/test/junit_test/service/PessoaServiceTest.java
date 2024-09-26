@@ -31,6 +31,9 @@ import com.test.junit_test.repository.PessoaRepository;
 @ExtendWith(MockitoExtension.class)
 public class PessoaServiceTest {
 
+  // Esta classe representa o teste unitário da pessoaService e, 
+  // portanto, não pode depender de implementações de outras classes, sendo que elas devem ser mockadas como a pessoaRepository
+
   // Padrão de teste AAA
   // - Arrange 
   // - Act
