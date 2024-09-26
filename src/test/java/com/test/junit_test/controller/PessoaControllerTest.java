@@ -28,13 +28,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import java.util.Collections;
 import java.util.Optional;
 
+/*
+Padrão de teste AAA
+- Arrange 
+- Act
+- Assert 
+*/
+
 @ExtendWith(MockitoExtension.class)
 public class PessoaControllerTest {
-
-  // Padrão de teste AAA
-  // - Arrange 
-  // - Act
-  // - Asset
 
   // @InjectMocks é usado para instanciar o objeto testado automaticamente e injetar nele todas as dependências anotadas @Mock ou @Spy
   @InjectMocks
@@ -46,6 +48,7 @@ public class PessoaControllerTest {
 
   private MockMvc mockMvcPessoaController;
 
+  // STUBS representam os objetos dos parâmetros
   private Pessoa pessoa, pessoaErro;
 
   private MockMultipartFile file;

@@ -1,6 +1,8 @@
 package com.test.junit_test.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -29,16 +31,18 @@ import com.test.junit_test.exception.BusinessException;
 import com.test.junit_test.model.Pessoa;
 import com.test.junit_test.repository.PessoaRepository;
 
+/* 
+Esta classe representa o teste unitário da pessoaService e, 
+portanto, não pode depender de implementações de outras classes, sendo que elas devem ser mockadas como a pessoaRepository
+
+Padrão de teste AAA
+- Arrange 
+- Act
+- Assert 
+*/
+
 @ExtendWith(MockitoExtension.class)
 public class PessoaServiceTest {
-
-  // Esta classe representa o teste unitário da pessoaService e, 
-  // portanto, não pode depender de implementações de outras classes, sendo que elas devem ser mockadas como a pessoaRepository
-
-  // Padrão de teste AAA
-  // - Arrange 
-  // - Act
-  // - Asset
 
   // @Spy é usado para criar uma instância de espionagem. 
   // @InjectMocks é usado para instanciar o objeto testado automaticamente e injetar nele todas as dependências anotadas @Mock ou @Spy
@@ -50,6 +54,7 @@ public class PessoaServiceTest {
   @Mock
   private PessoaRepository pessoaRepository;
 
+  // STUBS representam os objetos dos parâmetros
   private Pessoa pessoa;
 
   private MockMultipartFile file;
@@ -79,8 +84,7 @@ public class PessoaServiceTest {
 
     // ----------------------------- RESULTADO ESPERADO [Arrange]---------------------------
 
-    // [when] Atribui o resultado esperado ao executar o método findPessoa
-    // Se espera que o objeto retornado seja o mock do objeto this.pessoa
+    // [when] Atribui o resultado esperado ao executar o método findPessoa do pessoaRepository
     when(this.pessoaRepository.findPessoa(this.pessoa.getCpf()))
       .thenReturn(Collections.singletonList(this.pessoa))
       .thenCallRealMethod();
@@ -92,6 +96,8 @@ public class PessoaServiceTest {
 
     // --------------------------------- VERIFICAÇÕES [Assert] ------------------------------------
 
+    // Verifica se houve resultado na busca
+    assertNotNull(pessoas);
     // [assertEquals] verifica se o objeto retornado corresponde ao objeto this.pessoa mockado
     assertEquals(Collections.singletonList(this.pessoa), pessoas);
     // [verify] verifica se o método do repository foi chamado dentro do service
@@ -105,8 +111,7 @@ public class PessoaServiceTest {
   public void deveReceberArquivoEFazerUploadComSucesso() {
     // ----------------------------- RESULTADO ESPERADO [Arrange] ---------------------------
 
-    // [when] Atribui o resultado esperado ao executar o método findPessoa
-    // Se espera que o objeto retornado seja o mock do objeto this.pessoa
+    // [when] Atribui o resultado esperado ao executar o método uploadDocument 
     // when(this.pessoaService.uploadDocument(this.file))
     //     .thenReturn(ResponseEntity.ok("Arquivo carregado " + this.file.getName()))
     //     .thenCallRealMethod();
@@ -118,6 +123,8 @@ public class PessoaServiceTest {
 
     // --------------------------------- VERIFICAÇÕES [Assert] ------------------------------------
 
+    // Verifica se foi retornado a response
+    assertNotNull(responseService);
     // [assertEquals] verifica se o objeto retornado corresponde ao objeto
     // this.pessoa mockado
     assertEquals(responseService, ResponseEntity.ok("Arquivo carregado " + this.file.getName()));
@@ -144,8 +151,8 @@ public class PessoaServiceTest {
 
     // ------------------------------------ VERIFICAÇÕES [Assert] --------------------------------------
 
-    // Verifica se a exeção existe
-    assertThat(e, notNullValue());
+    // Verifica se foi lançado a exeção
+    assertNotNull(e);
     // Verifica se a mensagem da exceção esta correta
     assertThat(e.getMessage(), is("Erro ao buscar a pessoa por CPF: null"));
     // Verifica se existe a causa na exeção
@@ -172,8 +179,8 @@ public class PessoaServiceTest {
 
     // ------------------------------------ VERIFICAÇÕES [Assert] --------------------------------------
 
-    // Verifica se a exeção existe
-    assertThat(e, notNullValue());
+    // Verifica se foi lançado a exeção
+    assertNotNull(e);
     // Verifica se a mensagem da exceção esta correta
     assertThat(e.getMessage(), is("Erro ao carregar arquivo"));
     // Verifica se existe a causa na exeção
@@ -207,6 +214,8 @@ public class PessoaServiceTest {
 
     // ------------------------------------ VERIFICAÇÕES [Assert] --------------------------------------
 
+    // Verifica se foi lançado a exeção
+    assertNotNull(e);
     // Verifica se a mensagem da exceção esta correta
     assertThat(e.getMessage(),is("Erro ao buscar a pessoa por CPF: " + cpfInvalido));
     // Verifica se a causa da exceção lançada é RuntimeException
