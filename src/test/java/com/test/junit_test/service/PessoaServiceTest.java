@@ -31,6 +31,11 @@ import com.test.junit_test.repository.PessoaRepository;
 @ExtendWith(MockitoExtension.class)
 public class PessoaServiceTest {
 
+  // Padrão de teste AAA
+  // - Arrange 
+  // - Act
+  // - Asset
+
   // @Spy é usado para criar uma instância de espionagem. 
   // @InjectMocks é usado para instanciar o objeto testado automaticamente e injetar nele todas as dependências anotadas @Mock ou @Spy
   @Spy
@@ -50,10 +55,10 @@ public class PessoaServiceTest {
   // O @BeforeEach é chamado antes de executar o teste e é usado para definir o parâmetros e mockar os objetos de teste
   @BeforeEach
   public void setup(){
-    // Cria o STUB do objeto Pessoa
+    // Cria o STUB do objeto Pessoa [Arrange]
     this.pessoa = new Pessoa("Angelica", "12358569852", "Desenvolvedora", 30, "Sao Paulo", "Rua das Cruzes", 54);
   
-    // Criação dos STUB do arquivo
+    // Criação dos STUB do arquivo [Arrange]
     this.file = new MockMultipartFile(
         "file",
         "hello.txt",
@@ -66,7 +71,7 @@ public class PessoaServiceTest {
   @Test
   public void deveBuscarPessoaPeloCPFComSucesso(){
 
-    // ----------------------------- RESULTADO ESPERADO ---------------------------
+    // ----------------------------- RESULTADO ESPERADO [Arrange]---------------------------
 
     // [when] Atribui o resultado esperado ao executar o método findPessoa
     // Se espera que o objeto retornado seja o mock do objeto this.pessoa
@@ -74,12 +79,12 @@ public class PessoaServiceTest {
       .thenReturn(Collections.singletonList(this.pessoa))
       .thenCallRealMethod();
   
-    // ------------------------------ CHAMADA DO MÉTODO -----------------------------------
+    // ------------------------------ CHAMADA DO MÉTODO [Act] -----------------------------------
 
     // Faz a chamado do método do service com o parametro do CPF
     List<Pessoa> pessoas = this.pessoaService.buscaPessoasPorCpf(this.pessoa.getCpf());
 
-    // --------------------------------- VERIFICAÇÕES ------------------------------------
+    // --------------------------------- VERIFICAÇÕES [Assert] ------------------------------------
 
     // [assertEquals] verifica se o objeto retornado corresponde ao objeto this.pessoa mockado
     assertEquals(Collections.singletonList(this.pessoa), pessoas);
@@ -91,7 +96,7 @@ public class PessoaServiceTest {
 
   @Test
   public void deveReceberArquivoEFazerUploadComSucesso() {
-    // ----------------------------- RESULTADO ESPERADO ---------------------------
+    // ----------------------------- RESULTADO ESPERADO [Arrange] ---------------------------
 
     // [when] Atribui o resultado esperado ao executar o método findPessoa
     // Se espera que o objeto retornado seja o mock do objeto this.pessoa
@@ -99,12 +104,12 @@ public class PessoaServiceTest {
     //     .thenReturn(ResponseEntity.ok("Arquivo carregado " + this.file.getName()))
     //     .thenCallRealMethod();
 
-    // ------------------------------ CHAMADA DO MÉTODO -----------------------------------
+    // ------------------------------ CHAMADA DO MÉTODO [Act] -----------------------------------
 
     // Faz a chamado do método do service com o parametro do CPF
     ResponseEntity responseService = this.pessoaService.uploadDocument(this.file);
 
-    // --------------------------------- VERIFICAÇÕES ------------------------------------
+    // --------------------------------- VERIFICAÇÕES [Assert] ------------------------------------
 
     // [assertEquals] verifica se o objeto retornado corresponde ao objeto
     // this.pessoa mockado
@@ -121,7 +126,7 @@ public class PessoaServiceTest {
   @Test
   public void naoDeveChamaroRepositoryCasoCPFNulo() {
 
-    // ------------------------- CHAMADA DE MÉTODO PARA LANÇAR EXCEÇÃO -------------------------
+    // ------------------------- CHAMADA DE MÉTODO PARA LANÇAR EXCEÇÃO [Act] -------------------------
 
     // [assertThrows] Verifica se é lançado exceção ao chamar o método ao lançar o CPF como null
     final BusinessException e = assertThrows(BusinessException.class, () -> {
@@ -129,7 +134,7 @@ public class PessoaServiceTest {
       this.pessoaService.buscaPessoasPorCpf(null);
     });
 
-    // ------------------------------------ VERIFICAÇÕES --------------------------------------
+    // ------------------------------------ VERIFICAÇÕES [Assert] --------------------------------------
 
     // Verifica se a exeção existe
     assertThat(e, notNullValue());
@@ -148,7 +153,7 @@ public class PessoaServiceTest {
   @Test
   public void naoDeveFazerUploadCasoArquivoNulo() {
 
-    // ------------------------- CHAMADA DE MÉTODO PARA LANÇAR EXCEÇÃO -------------------------
+    // ------------------------- CHAMADA DE MÉTODO PARA LANÇAR EXCEÇÃO [Act] -------------------------
 
     // [assertThrows] Verifica se é lançado exceção ao chamar o método ao lançar o file como null
     final RuntimeException e = assertThrows(RuntimeException.class, () -> {
@@ -156,7 +161,7 @@ public class PessoaServiceTest {
       this.pessoaService.uploadDocument(null);
     });
 
-    // ------------------------------------ VERIFICAÇÕES --------------------------------------
+    // ------------------------------------ VERIFICAÇÕES [Assert] --------------------------------------
 
     // Verifica se a exeção existe
     assertThat(e, notNullValue());
@@ -177,20 +182,20 @@ public class PessoaServiceTest {
     // Define um CPF inválido
     String cpfInvalido =  "0000";
 
-    // ----------------------------- RESULTADO ESPERADO ---------------------------
+    // ----------------------------- RESULTADO ESPERADO [Arrange] ---------------------------
 
     // [When] Faz a chamada do método dentro do repository, o método deverá lançar a exeção
     when(this.pessoaRepository.findPessoa(cpfInvalido))
       // .thenThrow(new RuntimeException("Erro ao buscar a pessoa pelo CPF!"))
       .thenCallRealMethod();
 
-    // ------------------------- CHAMADA DE MÉTODO PARA LANÇAR EXCEÇÃO -------------------------
+    // ------------------------- CHAMADA DE MÉTODO PARA LANÇAR EXCEÇÃO [Act] -------------------------
 
     final BusinessException e = assertThrows(BusinessException.class, () -> {
       this.pessoaService.buscaPessoasPorCpf(cpfInvalido);
     });
 
-    // ------------------------------------ VERIFICAÇÕES --------------------------------------
+    // ------------------------------------ VERIFICAÇÕES [Assert] --------------------------------------
 
     // Verifica se a mensagem da exceção esta correta
     assertThat(e.getMessage(),is("Erro ao buscar a pessoa por CPF: " + cpfInvalido));

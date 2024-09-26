@@ -30,6 +30,11 @@ import java.util.Optional;
 @ExtendWith(MockitoExtension.class)
 public class PessoaControllerTest {
 
+  // Padrão de teste AAA
+  // - Arrange 
+  // - Act
+  // - Asset
+
   // @InjectMocks é usado para instanciar o objeto testado automaticamente e injetar nele todas as dependências anotadas @Mock ou @Spy
   @InjectMocks
   private PessoaController pessoaController;
@@ -50,12 +55,12 @@ public class PessoaControllerTest {
   @BeforeEach
   public void setup() {
 
-    // Criação do Mock Mvc do PessoaController
+    // Criação do Mock Mvc do PessoaController [Arrange]
     this.mockMvcPessoaController = MockMvcBuilders.standaloneSetup(this.pessoaController)
         .alwaysDo(print())
         .build();
 
-    // Criação dos STUBS do arquivo, pessoa correta e pessoa com erro
+    // Criação dos STUBS do arquivo, pessoa correta e pessoa com erro  [Arrange]
     this.file = new MockMultipartFile(
         "file",
         "hello.txt",
@@ -71,7 +76,7 @@ public class PessoaControllerTest {
   @Test
   public void deveRealizarUploadDocumentosComSucesso() throws Exception {
     
-    // ----------------------------- RESULTADO ESPERADO ---------------------------
+    // ----------------------------- RESULTADO ESPERADO [Arrange] ---------------------------
 
     // [when] Atribui o resultado esperado ao executar o método uploadDocument
     // Se espera o retorno da resposta de sucesso
@@ -80,7 +85,7 @@ public class PessoaControllerTest {
       .thenReturn(ResponseEntity.ok("Documento Carregado Com Sucesso!"))
       .thenCallRealMethod();
     
-    // ------------------------------ CHAMADA DO MÉTODO -----------------------------------
+    // ------------------------------ CHAMADA DO MÉTODO [Act] -----------------------------------
 
     // Faz a chamada no endpoint do controlador com os parãmetros
     this.mockMvcPessoaController.perform(multipart("/pessoa/upload-documento")
@@ -90,7 +95,7 @@ public class PessoaControllerTest {
         .andReturn();
 
 
-    // --------------------------------- VERIFICAÇÕES ------------------------------------
+    // --------------------------------- VERIFICAÇÕES [Assert] ------------------------------------
     // [verify] verifica se o método do service foi chamado uma vez no controller
     verify(this.pessoaService).uploadDocument(this.file);
     // [verifyNoMoreInteractions] verifica se o método do service não foi chamado mais de uma vez
@@ -99,7 +104,7 @@ public class PessoaControllerTest {
 
   @Test
   public void deveBuscarPessoaPorCPFComSucesso() throws Exception {
-    // ----------------------------- RESULTADO ESPERADO ---------------------------
+    // ----------------------------- RESULTADO ESPERADO [Arrange] ---------------------------
 
     // [when] Atribui o resultado esperado ao executar o método findPessoa
     // Se espera que o objeto retornado seja o mock do objeto this.pessoa
@@ -107,7 +112,7 @@ public class PessoaControllerTest {
       .thenReturn(Collections.singletonList(this.pessoa))
       .thenCallRealMethod();
 
-    // ------------------------------ CHAMADA DO MÉTODO -----------------------------------
+    // ------------------------------ CHAMADA DO MÉTODO [Act] -----------------------------------
 
     // Faz a chamado do método do service com o parametro do CPF
     this.mockMvcPessoaController.perform(get("/pessoa/buscar-por-cpf")
@@ -116,7 +121,7 @@ public class PessoaControllerTest {
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andReturn();
 
-    // --------------------------------- VERIFICAÇÕES ------------------------------------
+    // --------------------------------- VERIFICAÇÕES [Assert] ------------------------------------
 
     // [verify] verifica se o método do service foi chamado uma vez no controller
     verify(this.pessoaService).buscaPessoasPorCpf(this.pessoa.getCpf());
@@ -129,7 +134,7 @@ public class PessoaControllerTest {
   @Test
   public void deveRetornarErroCasoNaoPassadosParametrosObrigatorios() throws Exception {
 
-    // ------------------------------ CHAMADA DO MÉTODO -----------------------------------
+    // ------------------------------ CHAMADA DO MÉTODO [Act] -----------------------------------
 
     // Faz a chamado do método do service com o parametro do CPF nulo
     this.mockMvcPessoaController.perform(get("/pessoa/buscar-por-cpf")
@@ -137,6 +142,8 @@ public class PessoaControllerTest {
         .param("cpf",Optional.ofNullable(this.pessoaErro).map(Pessoa::getCpf).orElse(null)))
         .andExpect(MockMvcResultMatchers.status().is4xxClientError())
         .andReturn();
+
+    // --------------------------------- VERIFICAÇÕES [Assert] ------------------------------------
 
     // [verifyNoMoreInteractions] verifica se o método do repository não foi chamado mais de uma vez
     verifyNoInteractions(this.pessoaService);
