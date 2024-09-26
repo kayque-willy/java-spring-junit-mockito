@@ -1,6 +1,7 @@
 package com.test.junit_test.controller;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -53,6 +54,7 @@ public class PessoaControllerTest {
   
   // O @BeforeEach é chamado antes de executar o teste e é usado para definir o parâmetros e mockar os objetos de teste
   @BeforeEach
+  @DisplayName("Setup para criação dos STUBS para pessoa e o arquivo")
   public void setup() {
 
     // Criação do Mock Mvc do PessoaController [Arrange]
@@ -74,6 +76,7 @@ public class PessoaControllerTest {
   // -------------------------------- TESTES DE SUCESSO ---------------------------------
 
   @Test
+  @DisplayName("Deve realizar o upload do documento com sucesso")
   public void deveRealizarUploadDocumentosComSucesso() throws Exception {
     
     // ----------------------------- RESULTADO ESPERADO [Arrange] ---------------------------
@@ -103,6 +106,7 @@ public class PessoaControllerTest {
   }
 
   @Test
+  @DisplayName("Deve buscar a pessoa pelo CPF com sucesso")
   public void deveBuscarPessoaPorCPFComSucesso() throws Exception {
     // ----------------------------- RESULTADO ESPERADO [Arrange] ---------------------------
 
@@ -132,6 +136,7 @@ public class PessoaControllerTest {
   // --------------------------------- TESTES DE ERROS ---------------------------------
 
   @Test
+  @DisplayName("Deve retornar erro caso não seja passado os parâmetros obrigatórios (CPF)")
   public void deveRetornarErroCasoNaoPassadosParametrosObrigatorios() throws Exception {
 
     // ------------------------------ CHAMADA DO MÉTODO [Act] -----------------------------------

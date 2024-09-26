@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -57,6 +58,7 @@ public class PessoaServiceTest {
 
   // O @BeforeEach é chamado antes de executar o teste e é usado para definir o parâmetros e mockar os objetos de teste
   @BeforeEach
+  @DisplayName("Setup para criação dos STUBS para pessoa e o arquivo")
   public void setup(){
     // Cria o STUB do objeto Pessoa [Arrange]
     this.pessoa = new Pessoa("Angelica", "12358569852", "Desenvolvedora", 30, "Sao Paulo", "Rua das Cruzes", 54);
@@ -72,6 +74,7 @@ public class PessoaServiceTest {
   // -------------------------------- TESTES DE SUCESSO ---------------------------------
 
   @Test
+  @DisplayName("Deve buscar a pessoa pelo CPF com sucesso")
   public void deveBuscarPessoaPeloCPFComSucesso(){
 
     // ----------------------------- RESULTADO ESPERADO [Arrange]---------------------------
@@ -98,6 +101,7 @@ public class PessoaServiceTest {
   }
 
   @Test
+  @DisplayName("Deve receber o arquivo e fazer o upload com sucesso")
   public void deveReceberArquivoEFazerUploadComSucesso() {
     // ----------------------------- RESULTADO ESPERADO [Arrange] ---------------------------
 
@@ -127,6 +131,7 @@ public class PessoaServiceTest {
   // --------------------------------- TESTES DE ERROS ---------------------------------
 
   @Test
+  @DisplayName("Não deve chamar o repository caso o CPF seja nulo")
   public void naoDeveChamaroRepositoryCasoCPFNulo() {
 
     // ------------------------- CHAMADA DE MÉTODO PARA LANÇAR EXCEÇÃO [Act] -------------------------
@@ -154,6 +159,7 @@ public class PessoaServiceTest {
   }
 
   @Test
+  @DisplayName("Não deve fazer upload caso o arquivo seja nulo")
   public void naoDeveFazerUploadCasoArquivoNulo() {
 
     // ------------------------- CHAMADA DE MÉTODO PARA LANÇAR EXCEÇÃO [Act] -------------------------
@@ -180,6 +186,7 @@ public class PessoaServiceTest {
   }
 
   @Test
+  @DisplayName("Deve acionar exception quando o repository falhar")
   public void deveAcionarExceptionQuandoRepositoryFalhar() {
 
     // Define um CPF inválido
