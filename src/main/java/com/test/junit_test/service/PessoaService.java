@@ -26,14 +26,22 @@ public class PessoaService {
     @Autowired
     private PessoaRepository repository;
 
+    public List<Pessoa> buscaPessoa(Pessoa pessoa) throws BusinessException {
+        try {
+            Objects.requireNonNull(pessoa, "Dados da pessoa são obrigatórios!");
+            return repository.findPessoa(pessoa);
+        } catch (Exception e) {
+            throw new BusinessException("Erro ao buscar a pessoa: " + pessoa, e);
+        }
+    }
+
     public List<Pessoa> buscaPessoasPorCpf(String cpf) throws BusinessException {
         try {
             Objects.requireNonNull(cpf, "CPF é obrigatório!");
-            return repository.findPessoa(cpf);
+            return repository.findPessoaPorCpf(cpf);
         } catch (Exception e) {
             throw new BusinessException("Erro ao buscar a pessoa por CPF: " + cpf, e);
         }
-
     }
 
     public ResponseEntity<String> uploadDocument(MultipartFile file) {

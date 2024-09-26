@@ -1,14 +1,12 @@
 package com.test.junit_test.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.CoreMatchers.is;
 
@@ -19,6 +17,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -54,6 +54,10 @@ public class PessoaServiceTest {
   @Mock
   private PessoaRepository pessoaRepository;
 
+  // @Captor é usado para verificar como foram passados os parãmetros de um objeto
+  @Captor
+  ArgumentCaptor<Pessoa> pessoaArgumentCaptor;
+
   // STUBS representam os objetos dos parâmetros
   private Pessoa pessoa;
 
@@ -79,13 +83,44 @@ public class PessoaServiceTest {
   // -------------------------------- TESTES DE SUCESSO ---------------------------------
 
   @Test
+  @DisplayName("Deve buscar a pessoa com sucesso")
+  public void deveBuscarPessoaComSucesso(){
+
+    // ----------------------------- RESULTADO ESPERADO [Arrange]---------------------------
+
+    // [when] Atribui o resultado esperado ao executar o método findPessoa do pessoaRepository
+    // Utiliza o argument captor para verificar qual foi o objeto passado para o repository
+    when(this.pessoaRepository.findPessoa(this.pessoaArgumentCaptor.capture()))
+      .thenReturn(Collections.singletonList(this.pessoa))
+      .thenCallRealMethod();
+  
+    // ------------------------------ CHAMADA DO MÉTODO [Act] -----------------------------------
+
+    // Faz a chamado do método do service com o parametro do CPF
+    List<Pessoa> pessoas = this.pessoaService.buscaPessoa(this.pessoa);
+
+    // --------------------------------- VERIFICAÇÕES [Assert] ------------------------------------
+
+    // Verifica se houve resultado na busca
+    assertNotNull(pessoas);
+    // Verifica se o objeto capturado no parâmetro do repository é igual ao objeto passado para o service
+    assertEquals(this.pessoa, this.pessoaArgumentCaptor.getValue());
+    // [assertEquals] verifica se o objeto retornado corresponde ao objeto this.pessoa mockado
+    assertEquals(Collections.singletonList(this.pessoa), pessoas);
+    // [verify] verifica se o método do repository foi chamado dentro do service
+    verify(this.pessoaRepository).findPessoa(this.pessoa);
+    // [verifyNoMoreInteractions] verifica se o método do repository não foi chamado mais de uma vez
+    verifyNoMoreInteractions(this.pessoaRepository);
+  }
+
+  @Test
   @DisplayName("Deve buscar a pessoa pelo CPF com sucesso")
   public void deveBuscarPessoaPeloCPFComSucesso(){
 
     // ----------------------------- RESULTADO ESPERADO [Arrange]---------------------------
 
     // [when] Atribui o resultado esperado ao executar o método findPessoa do pessoaRepository
-    when(this.pessoaRepository.findPessoa(this.pessoa.getCpf()))
+    when(this.pessoaRepository.findPessoaPorCpf(this.pessoa.getCpf()))
       .thenReturn(Collections.singletonList(this.pessoa))
       .thenCallRealMethod();
   
@@ -101,7 +136,7 @@ public class PessoaServiceTest {
     // [assertEquals] verifica se o objeto retornado corresponde ao objeto this.pessoa mockado
     assertEquals(Collections.singletonList(this.pessoa), pessoas);
     // [verify] verifica se o método do repository foi chamado dentro do service
-    verify(this.pessoaRepository).findPessoa(this.pessoa.getCpf());
+    verify(this.pessoaRepository).findPessoaPorCpf(this.pessoa.getCpf());
     // [verifyNoMoreInteractions] verifica se o método do repository não foi chamado mais de uma vez
     verifyNoMoreInteractions(this.pessoaRepository);
   }
@@ -156,7 +191,7 @@ public class PessoaServiceTest {
     // Verifica se a mensagem da exceção esta correta
     assertThat(e.getMessage(), is("Erro ao buscar a pessoa por CPF: null"));
     // Verifica se existe a causa na exeção
-    assertThat(e.getCause(), notNullValue());
+    assertNotNull(e.getCause());
     // Verifica se a mensagem da causa está correta
     assertThat(e.getCause().getMessage(), is("CPF é obrigatório!"));
 
@@ -175,7 +210,7 @@ public class PessoaServiceTest {
     // ----------------------------- RESULTADO ESPERADO [Arrange] ---------------------------
 
     // [When] Simula o lançamento de uma exceção pelo método do repository
-    when(this.pessoaRepository.findPessoa(cpfInvalido))
+    when(this.pessoaRepository.findPessoaPorCpf(cpfInvalido))
     //   .thenThrow(new RuntimeException("Erro ao buscar a pessoa pelo CPF!"))
       .thenCallRealMethod();
 
@@ -197,7 +232,7 @@ public class PessoaServiceTest {
     assertThat(e.getCause().getMessage(), is("Erro ao buscar a pessoa pelo CPF!"));
 
     // [verify] verifica se o método do repository foi chamado dentro do service
-    verify(this.pessoaRepository).findPessoa(cpfInvalido);
+    verify(this.pessoaRepository).findPessoaPorCpf(cpfInvalido);
     // [verifyNoMoreInteractions] verifica se o método do repository não foi chamado mais de uma vez dentro do service
     verifyNoMoreInteractions(this.pessoaRepository);
   }
@@ -221,7 +256,7 @@ public class PessoaServiceTest {
     // Verifica se a mensagem da exceção esta correta
     assertThat(e.getMessage(), is("Erro ao carregar arquivo"));
     // Verifica se existe a causa na exeção
-    assertThat(e.getCause(), notNullValue());
+    assertNotNull(e.getCause());
     // Verifica se a mensagem da causa está correta
     assertThat(e.getCause().getMessage(), is("arquivo é obrigatório!"));
 

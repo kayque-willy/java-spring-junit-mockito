@@ -7,13 +7,34 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Repository;
 
-import com.test.junit_test.exception.BusinessException;
 import com.test.junit_test.model.Pessoa;
 
 @Repository
 public class PessoaRepository {
 
-  public List<Pessoa> findPessoa(String cpf) throws RuntimeException {
+
+  public List<Pessoa> findPessoa(Pessoa pessoaBusca) throws RuntimeException {
+    List<Pessoa> pessoas = this.listaPessoas();
+
+    List<Pessoa> pessoaBuscaResultado = pessoas.stream()
+        .filter(Objects::nonNull)
+        .filter(pessoa -> pessoa.getCpf().equals(pessoaBusca.getCpf()))
+        .filter(pessoa -> pessoa.getNome().equals(pessoaBusca.getNome()))
+        .filter(pessoa -> pessoa.getProfissao().equals(pessoaBusca.getProfissao()))
+        .filter(pessoa -> pessoa.getIdade().equals(pessoaBusca.getIdade()))
+        .filter(pessoa -> pessoa.getCidade().equals(pessoaBusca.getCidade()))
+        .filter(pessoa -> pessoa.getRua().equals(pessoaBusca.getRua()))
+        .filter(pessoa -> pessoa.getNumero().equals(pessoaBusca.getNumero()))
+        .collect(Collectors.toList());
+
+    if (pessoaBuscaResultado.size() == 0) {
+      throw new RuntimeException("Erro ao buscar a pessoa!");
+    }
+
+    return pessoaBuscaResultado;
+  }
+
+  public List<Pessoa> findPessoaPorCpf(String cpf) throws RuntimeException {
     List<Pessoa> pessoas = this.listaPessoas();
 
     List<Pessoa> pessoaBusca = pessoas.stream()
