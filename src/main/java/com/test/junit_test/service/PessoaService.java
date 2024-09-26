@@ -31,7 +31,7 @@ public class PessoaService {
             Objects.requireNonNull(cpf, "CPF é obrigatório!");
             return repository.findPessoa(cpf);
         } catch (Exception e) {
-            throw null;
+            throw new BusinessException("Erro ao buscar a pessoa por CPF: " + cpf, e);
         }
 
     }

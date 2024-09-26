@@ -174,9 +174,9 @@ public class PessoaServiceTest {
 
     // ----------------------------- RESULTADO ESPERADO [Arrange] ---------------------------
 
-    // [When] Faz a chamada do método dentro do repository, o método deverá lançar a exeção
+    // [When] Simula o lançamento de uma exceção pelo método do repository
     when(this.pessoaRepository.findPessoa(cpfInvalido))
-      // .thenThrow(new RuntimeException("Erro ao buscar a pessoa pelo CPF!"))
+    //   .thenThrow(new RuntimeException("Erro ao buscar a pessoa pelo CPF!"))
       .thenCallRealMethod();
 
     // ------------------------- CHAMADA DE MÉTODO PARA LANÇAR EXCEÇÃO [Act] -------------------------

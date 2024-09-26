@@ -21,7 +21,7 @@ public class PessoaRepository {
         .filter(pessoa -> pessoa.getCpf().equals(cpf))
         .collect(Collectors.toList());
 
-    if (true) {
+    if (pessoaBusca.size() == 0) {
       throw new RuntimeException("Erro ao buscar a pessoa pelo CPF!");
     }
 
