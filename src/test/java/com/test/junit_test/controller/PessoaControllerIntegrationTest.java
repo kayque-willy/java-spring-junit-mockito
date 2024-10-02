@@ -18,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
@@ -26,9 +27,9 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.jsonpath.JsonPath;
 import com.test.junit_test.model.Pessoa;
 import com.test.junit_test.repository.PessoaRepository;
+import com.test.junit_test.service.PessoaService;
 
 import java.util.Optional;
 
@@ -58,8 +59,8 @@ public class PessoaControllerIntegrationTest {
   @Autowired
   private ObjectMapper objectMapper;
 
-  // @InjectMocks
-  // private PessoaController pessoaController;
+  // @MockBean
+  // private PessoaService pessoaService;
 
   // STUBS representam os objetos dos parâmetros
   private Pessoa pessoa, pessoaErro;
