@@ -1,5 +1,6 @@
 package com.test.junit_test.repository;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -12,11 +13,28 @@ import com.test.junit_test.model.Pessoa;
 @Repository
 public class PessoaRepository {
 
+  private List<Pessoa> listaPessoas;
+
+  public PessoaRepository(){
+    this.listaPessoas = new ArrayList<Pessoa>(Arrays.asList(
+      new Pessoa("Angelica", "12358569852", "Desenvolvedora", 30, "Sao Paulo", "Rua das Cruzes", 54),
+      new Pessoa("Maria", "54865897584", "Product Owner", 25, "Rio de Janeiro", "Rua dos Carneiros", 29),
+      new Pessoa("Pedro", "54887587458", "Segurança", 58, "Porto Alegre", "Rua dos Andradas", 94),
+      new Pessoa("Felipe", "21456358754", "Advogado", 42, "Maceió", "Rua Central", 7859),
+      new Pessoa("João", "54865932101", "Contador", 33, "São Paulo", "Rua das Hortências", 5587),
+      new Pessoa("Elder", "54802365741", "Servidor Público", 58, "Porto Alegre", "Avenida Mauá", 52)));
+  }
+
+  public void addPessoa(Pessoa pessoa){
+    this.listaPessoas.add(pessoa);
+  }
+
+  public void removePessoa(Pessoa pessoa){
+    this.listaPessoas.remove(pessoa);
+  }
 
   public List<Pessoa> findPessoa(Pessoa pessoaBusca) throws RuntimeException {
-    List<Pessoa> pessoas = this.listaPessoas();
-
-    List<Pessoa> pessoaBuscaResultado = pessoas.stream()
+    List<Pessoa> pessoaBuscaResultado = this.listaPessoas.stream()
         .filter(Objects::nonNull)
         .filter(pessoa -> pessoa.getCpf().equals(pessoaBusca.getCpf()))
         .filter(pessoa -> pessoa.getNome().equals(pessoaBusca.getNome()))
@@ -35,9 +53,7 @@ public class PessoaRepository {
   }
 
   public List<Pessoa> findPessoaPorCpf(String cpf) throws RuntimeException {
-    List<Pessoa> pessoas = this.listaPessoas();
-
-    List<Pessoa> pessoaBusca = pessoas.stream()
+    List<Pessoa> pessoaBusca = this.listaPessoas.stream()
         .filter(Objects::nonNull)
         .filter(pessoa -> pessoa.getCpf().equals(cpf))
         .collect(Collectors.toList());
@@ -49,14 +65,8 @@ public class PessoaRepository {
     return pessoaBusca;
   }
 
-  private static List<Pessoa> listaPessoas() {
-    return Arrays.asList(
-        new Pessoa("Angelica", "12358569852", "Desenvolvedora", 30, "Sao Paulo", "Rua das Cruzes", 54),
-        new Pessoa("Maria", "54865897584", "Product Owner", 25, "Rio de Janeiro", "Rua dos Carneiros", 29),
-        new Pessoa("Pedro", "54887587458", "Segurança", 58, "Porto Alegre", "Rua dos Andradas", 94),
-        new Pessoa("Felipe", "21456358754", "Advogado", 42, "Maceió", "Rua Central", 7859),
-        new Pessoa("João", "54865932101", "Contador", 33, "São Paulo", "Rua das Hortências", 5587),
-        new Pessoa("Elder", "54802365741", "Servidor Público", 58, "Porto Alegre", "Avenida Mauá", 52));
+  public List<Pessoa> listarPessoas() {
+    return this.listaPessoas;
   }
   
 }

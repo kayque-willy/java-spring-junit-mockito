@@ -1,7 +1,5 @@
 package com.test.junit_test.service;
 
-import static java.lang.String.format;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.List;
@@ -26,7 +24,17 @@ public class PessoaService {
     @Autowired
     private PessoaRepository repository;
 
-    public List<Pessoa> buscaPessoa(Pessoa pessoa) throws BusinessException {
+    public Pessoa adicionarPessoa(Pessoa pessoa){
+        try {
+            Objects.requireNonNull(pessoa, "Dados da pessoa são obrigatórios!");
+            repository.addPessoa(pessoa);
+            return pessoa;
+        } catch (Exception e) {
+            throw new BusinessException("Erro ao adicionar a pessoa: " + pessoa, e);
+        }
+    }
+
+    public List<Pessoa> buscarPessoa(Pessoa pessoa) throws BusinessException {
         try {
             Objects.requireNonNull(pessoa, "Dados da pessoa são obrigatórios!");
             return repository.findPessoa(pessoa);
@@ -41,6 +49,14 @@ public class PessoaService {
             return repository.findPessoaPorCpf(cpf);
         } catch (Exception e) {
             throw new BusinessException("Erro ao buscar a pessoa por CPF: " + cpf, e);
+        }
+    }
+
+    public List<Pessoa> listarPessoas() throws BusinessException {
+        try {
+            return repository.listarPessoas();
+        } catch (Exception e) {
+            throw new BusinessException("Erro ao listar as pessoas", e);
         }
     }
 

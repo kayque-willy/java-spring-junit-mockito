@@ -1,18 +1,11 @@
 package com.test.junit_test.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.CoreMatchers.is;
-
 import java.util.Collections;
 import java.util.List;
 
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.MatcherAssert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,6 +14,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
@@ -32,17 +26,19 @@ import com.test.junit_test.model.Pessoa;
 import com.test.junit_test.repository.PessoaRepository;
 
 /* 
-Esta classe representa o teste unitário da pessoaService e, 
-portanto, não pode depender de implementações de outras classes, sendo que elas devem ser mockadas como a pessoaRepository
+
+Esta classe representa o TESTE UNITÁRIO da pessoaService
+e, portanto, não pode depender de implementações de outras classes, sendo que elas devem ser mockadas como a pessoaRepository
 
 Padrão de teste AAA
 - Arrange 
 - Act
 - Assert 
+
 */
 
 @ExtendWith(MockitoExtension.class)
-public class PessoaServiceTest {
+public class PessoaServiceUnitTest {
 
   // @Spy é usado para criar uma instância de espionagem. 
   // @InjectMocks é usado para instanciar o objeto testado automaticamente e injetar nele todas as dependências anotadas @Mock ou @Spy
@@ -57,6 +53,9 @@ public class PessoaServiceTest {
   // @Captor é usado para verificar como foram passados os parãmetros de um objeto
   @Captor
   ArgumentCaptor<Pessoa> pessoaArgumentCaptor;
+
+  @Captor
+  ArgumentCaptor<String> pessoaCPFArgumentCaptor;
 
   // STUBS representam os objetos dos parâmetros
   private Pessoa pessoa;
@@ -90,27 +89,27 @@ public class PessoaServiceTest {
 
     // [when] Atribui o resultado esperado ao executar o método findPessoa do pessoaRepository
     // Utiliza o argument captor para verificar qual foi o objeto passado para o repository
-    when(this.pessoaRepository.findPessoa(this.pessoaArgumentCaptor.capture()))
+    Mockito.when(this.pessoaRepository.findPessoa(this.pessoaArgumentCaptor.capture()))
       .thenReturn(Collections.singletonList(this.pessoa))
       .thenCallRealMethod();
   
     // ------------------------------ CHAMADA DO MÉTODO [Act] -----------------------------------
 
     // Faz a chamado do método do service com o parametro do CPF
-    List<Pessoa> pessoas = this.pessoaService.buscaPessoa(this.pessoa);
+    List<Pessoa> pessoas = this.pessoaService.buscarPessoa(this.pessoa);
 
     // --------------------------------- VERIFICAÇÕES [Assert] ------------------------------------
 
     // Verifica se houve resultado na busca
-    assertNotNull(pessoas);
+    Assertions.assertNotNull(pessoas);
     // Verifica se o objeto capturado no parâmetro do repository é igual ao objeto passado para o service
-    assertEquals(this.pessoa, this.pessoaArgumentCaptor.getValue());
+    Assertions.assertEquals(this.pessoa, this.pessoaArgumentCaptor.getValue());
     // [assertEquals] verifica se o objeto retornado corresponde ao objeto this.pessoa mockado
-    assertEquals(Collections.singletonList(this.pessoa), pessoas);
+    Assertions.assertEquals(Collections.singletonList(this.pessoa), pessoas);
     // [verify] verifica se o método do repository foi chamado dentro do service
-    verify(this.pessoaRepository).findPessoa(this.pessoa);
+    Mockito.verify(this.pessoaRepository, Mockito.times(1)).findPessoa(this.pessoa);
     // [verifyNoMoreInteractions] verifica se o método do repository não foi chamado mais de uma vez
-    verifyNoMoreInteractions(this.pessoaRepository);
+    Mockito.verifyNoMoreInteractions(this.pessoaRepository);
   }
 
   @Test
@@ -120,7 +119,7 @@ public class PessoaServiceTest {
     // ----------------------------- RESULTADO ESPERADO [Arrange]---------------------------
 
     // [when] Atribui o resultado esperado ao executar o método findPessoa do pessoaRepository
-    when(this.pessoaRepository.findPessoaPorCpf(this.pessoa.getCpf()))
+    Mockito.when(this.pessoaRepository.findPessoaPorCpf(this.pessoaCPFArgumentCaptor.capture()))
       .thenReturn(Collections.singletonList(this.pessoa))
       .thenCallRealMethod();
   
@@ -132,13 +131,15 @@ public class PessoaServiceTest {
     // --------------------------------- VERIFICAÇÕES [Assert] ------------------------------------
 
     // Verifica se houve resultado na busca
-    assertNotNull(pessoas);
+    Assertions.assertNotNull(pessoas);
     // [assertEquals] verifica se o objeto retornado corresponde ao objeto this.pessoa mockado
-    assertEquals(Collections.singletonList(this.pessoa), pessoas);
+    Assertions.assertEquals(Collections.singletonList(this.pessoa), pessoas);
+    // Verifica se o parâmetro do CPF capturado no repository é igual ao do objeto passado para o service
+    Assertions.assertEquals(this.pessoa.getCpf(), this.pessoaCPFArgumentCaptor.getValue());
     // [verify] verifica se o método do repository foi chamado dentro do service
-    verify(this.pessoaRepository).findPessoaPorCpf(this.pessoa.getCpf());
+    Mockito.verify(this.pessoaRepository, Mockito.times(1)).findPessoaPorCpf(this.pessoa.getCpf());
     // [verifyNoMoreInteractions] verifica se o método do repository não foi chamado mais de uma vez
-    verifyNoMoreInteractions(this.pessoaRepository);
+    Mockito.verifyNoMoreInteractions(this.pessoaRepository);
   }
 
   @Test
@@ -159,15 +160,15 @@ public class PessoaServiceTest {
     // --------------------------------- VERIFICAÇÕES [Assert] ------------------------------------
 
     // Verifica se foi retornado a response
-    assertNotNull(responseService);
+    Assertions.assertNotNull(responseService);
     // [assertEquals] verifica se o objeto retornado corresponde ao objeto
     // this.pessoa mockado
-    assertEquals(responseService, ResponseEntity.ok("Arquivo carregado " + this.file.getName()));
+    Assertions.assertEquals(responseService, ResponseEntity.ok("Arquivo carregado " + this.file.getName()));
     // [verify] verifica se o método do service foi chamado
-    verify(this.pessoaService).uploadDocument(this.file);
+    Mockito.verify(this.pessoaService, Mockito.times(1)).uploadDocument(this.file);
     // [verifyNoMoreInteractions] verifica se o método do repository não foi chamado
     // mais de uma vez
-    verifyNoMoreInteractions(this.pessoaService);
+    Mockito.verifyNoMoreInteractions(this.pessoaService);
   }
 
   // --------------------------------- TESTES DE ERROS ---------------------------------
@@ -179,7 +180,7 @@ public class PessoaServiceTest {
     // ------------------------- CHAMADA DE MÉTODO PARA LANÇAR EXCEÇÃO [Act] -------------------------
 
     // [assertThrows] Verifica se é lançado exceção ao chamar o método ao lançar o CPF como null
-    final BusinessException e = assertThrows(BusinessException.class, () -> {
+    final BusinessException e = Assertions.assertThrows(BusinessException.class, () -> {
       // Faza a chamada do método com o CPF nulo para gerar a exceção
       this.pessoaService.buscaPessoasPorCpf(null);
     });
@@ -187,16 +188,16 @@ public class PessoaServiceTest {
     // ------------------------------------ VERIFICAÇÕES [Assert] --------------------------------------
 
     // Verifica se foi lançado a exeção
-    assertNotNull(e);
+    Assertions.assertNotNull(e);
     // Verifica se a mensagem da exceção esta correta
-    assertThat(e.getMessage(), is("Erro ao buscar a pessoa por CPF: null"));
+    MatcherAssert.assertThat(e.getMessage(), CoreMatchers.is("Erro ao buscar a pessoa por CPF: null"));
     // Verifica se existe a causa na exeção
-    assertNotNull(e.getCause());
+    Assertions.assertNotNull(e.getCause());
     // Verifica se a mensagem da causa está correta
-    assertThat(e.getCause().getMessage(), is("CPF é obrigatório!"));
+    MatcherAssert.assertThat(e.getCause().getMessage(), CoreMatchers.is("CPF é obrigatório!"));
 
     // [verifyNoMoreInteractions] verifica se o método do repository não foi chamado mais de uma vez dentro do service
-    verifyNoInteractions(this.pessoaRepository);
+    Mockito.verifyNoInteractions(this.pessoaRepository);
 
   }
 
@@ -210,31 +211,31 @@ public class PessoaServiceTest {
     // ----------------------------- RESULTADO ESPERADO [Arrange] ---------------------------
 
     // [When] Simula o lançamento de uma exceção pelo método do repository
-    when(this.pessoaRepository.findPessoaPorCpf(cpfInvalido))
+    Mockito.when(this.pessoaRepository.findPessoaPorCpf(cpfInvalido))
     //   .thenThrow(new RuntimeException("Erro ao buscar a pessoa pelo CPF!"))
       .thenCallRealMethod();
 
     // ------------------------- CHAMADA DE MÉTODO PARA LANÇAR EXCEÇÃO [Act] -------------------------
 
-    final BusinessException e = assertThrows(BusinessException.class, () -> {
+    final BusinessException e = Assertions.assertThrows(BusinessException.class, () -> {
       this.pessoaService.buscaPessoasPorCpf(cpfInvalido);
     });
 
     // ------------------------------------ VERIFICAÇÕES [Assert] --------------------------------------
 
     // Verifica se foi lançado a exeção
-    assertNotNull(e);
+    Assertions.assertNotNull(e);
     // Verifica se a mensagem da exceção esta correta
-    assertThat(e.getMessage(),is("Erro ao buscar a pessoa por CPF: " + cpfInvalido));
+    MatcherAssert.assertThat(e.getMessage(), CoreMatchers.is("Erro ao buscar a pessoa por CPF: " + cpfInvalido));
     // Verifica se a causa da exceção lançada é RuntimeException
-    assertThat(e.getCause().getClass(), is(RuntimeException.class));
+    MatcherAssert.assertThat(e.getCause().getClass(), CoreMatchers.is(RuntimeException.class));
     // Verifica se a mensagem da causa esta correta
-    assertThat(e.getCause().getMessage(), is("Erro ao buscar a pessoa pelo CPF!"));
+    MatcherAssert.assertThat(e.getCause().getMessage(), CoreMatchers.is("Erro ao buscar a pessoa pelo CPF!"));
 
     // [verify] verifica se o método do repository foi chamado dentro do service
-    verify(this.pessoaRepository).findPessoaPorCpf(cpfInvalido);
+    Mockito.verify(this.pessoaRepository, Mockito.times(1)).findPessoaPorCpf(cpfInvalido);
     // [verifyNoMoreInteractions] verifica se o método do repository não foi chamado mais de uma vez dentro do service
-    verifyNoMoreInteractions(this.pessoaRepository);
+    Mockito.verifyNoMoreInteractions(this.pessoaRepository);
   }
 
   @Test
@@ -244,7 +245,7 @@ public class PessoaServiceTest {
     // ------------------------- CHAMADA DE MÉTODO PARA LANÇAR EXCEÇÃO [Act] -------------------------
 
     // [assertThrows] Verifica se é lançado exceção ao chamar o método ao lançar o file como null
-    final RuntimeException e = assertThrows(RuntimeException.class, () -> {
+    final RuntimeException e = Assertions.assertThrows(RuntimeException.class, () -> {
       // Faza a chamada do método com o arquivo nulo para gerar a exceção
       this.pessoaService.uploadDocument(null);
     });
@@ -252,16 +253,16 @@ public class PessoaServiceTest {
     // ------------------------------------ VERIFICAÇÕES [Assert] --------------------------------------
 
     // Verifica se foi lançado a exeção
-    assertNotNull(e);
+    Assertions.assertNotNull(e);
     // Verifica se a mensagem da exceção esta correta
-    assertThat(e.getMessage(), is("Erro ao carregar arquivo"));
+    MatcherAssert.assertThat(e.getMessage(), CoreMatchers.is("Erro ao carregar arquivo"));
     // Verifica se existe a causa na exeção
-    assertNotNull(e.getCause());
+    Assertions.assertNotNull(e.getCause());
     // Verifica se a mensagem da causa está correta
-    assertThat(e.getCause().getMessage(), is("arquivo é obrigatório!"));
+    MatcherAssert.assertThat(e.getCause().getMessage(), CoreMatchers.is("arquivo é obrigatório!"));
 
     // [verify] verifica se o método do service foi chamado 
-    verify(this.pessoaService).uploadDocument(null);
+    Mockito.verify(this.pessoaService, Mockito.times(1)).uploadDocument(null);
   }
   
 }
